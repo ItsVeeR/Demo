@@ -34,6 +34,12 @@ jobs:
     - name: Build with Maven
       run: mvn -B package --file pom.xml
       
+    - name: update Tag for packaging
+      run: |
+            echo "Updating tag for published package to ${{ steps.tagging.outputs.new_tag }}"
+            mvn versions:set -DnewVersion=${{ steps.tagging.outputs.new_tag }} -DprocessAllModules
+            mvn versions:commit -DprocessAllModules   
+            
     - name: Publish package
       run: mvn --batch-mode deploy
       env:
