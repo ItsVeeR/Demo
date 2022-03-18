@@ -1,4 +1,8 @@
-# This workflow will build a package using Maven and then publish it to GitHub packages when a release is created
+# This workflow will build a package using Maven and then publish it to GitHub packages when a release is created.
+# For Tagging, it is using DEFAULT_BUMP as minor and hence create Minor release tags.
+# Please refer to Workflow-ReadMe.txt file for the detailed description of this workflow.
+# Also, added few points to Workflow-ReadMe.txt for future updations to this flow.
+
  
 name: Maven Package
 
