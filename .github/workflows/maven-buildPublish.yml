@@ -52,4 +52,11 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
       with:
         args: Release ${{ steps.tagging.outputs.new_tag }}
+        
+    - name: Push Updated tag from saved value
+      uses: anothrNick/github-tag-action@1.36.0
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        WITH_V: false
+        CUSTOM_TAG: ${{ steps.tagging.outputs.new_tag }}
  
