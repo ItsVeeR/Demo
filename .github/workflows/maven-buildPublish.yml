@@ -11,7 +11,7 @@ on:
     branches: [ main ]
 
 jobs:
-  BuildPublishPackage:
+  BuildAndPublish:
 
     runs-on: ubuntu-latest
     permissions:
@@ -49,17 +49,31 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         
-    - name: Create Release
-      uses: elgohr/Github-Release-Action@master
-      env:
-        GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
-      with:
-        args: Release ${{ steps.tagging.outputs.new_tag }}
+    outputs:
+        CurrenttagVersion: ${{ steps.tagging.outputs.new_tag }}
         
-    - name: Push Updated tag from saved value
-      uses: anothrNick/github-tag-action@1.36.0
-      env:
+  Release: 
+     needs: BuildAndPublish
+     runs-on: ubuntu-latest
+     permissions:
+      contents: read
+      packages: write
+      
+     steps:
+     
+     - uses: actions/checkout@v2
+     
+     - name: Create Release
+       uses: elgohr/Github-Release-Action@master
+       env:
+        GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+       with:
+        args: Release ${{ needs.BuildAndPublish.outputs.CurrenttagVersion }}
+        
+     - name: Push Updated tag from saved value
+       uses: anothrNick/github-tag-action@1.36.0
+       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         WITH_V: false
-        CUSTOM_TAG: ${{ steps.tagging.outputs.new_tag }}
+        CUSTOM_TAG: ${{ needs.BuildAndPublish.outputs.CurrenttagVersion }}
  
