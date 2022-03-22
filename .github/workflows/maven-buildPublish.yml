@@ -12,7 +12,7 @@ on:
 
 jobs:
   BuildAndPublish:
-
+    environment: Release
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -34,6 +34,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         WITH_V: true
         DRY_RUN: true
+        DEFAULT_BUMP: ${{ secrets.RELEASETYPE }}
         
     - name: Build with Maven
       run: mvn -B package --file pom.xml
@@ -50,10 +51,11 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         
     outputs:
-        CurrenttagVersion: ${{ steps.tagging.outputs.new_tag }}
+        CurrentTagVersion: ${{ steps.tagging.outputs.new_tag }}
         
   Release: 
      needs: BuildAndPublish
+     environment: Release
      runs-on: ubuntu-latest
      permissions:
       contents: read
@@ -68,12 +70,12 @@ jobs:
        env:
         GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
        with:
-        args: Release ${{ needs.BuildAndPublish.outputs.CurrenttagVersion }}
+        args: Release ${{ needs.BuildAndPublish.outputs.CurrentTagVersion }}
         
      - name: Push Updated tag from saved value
        uses: anothrNick/github-tag-action@1.36.0
        env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         WITH_V: false
-        CUSTOM_TAG: ${{ needs.BuildAndPublish.outputs.CurrenttagVersion }}
+        CUSTOM_TAG: ${{ needs.BuildAndPublish.outputs.CurrentTagVersion }}
  
